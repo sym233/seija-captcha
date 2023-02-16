@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Seija Captcha</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <button id="btn">Click</button>
+    <!-- <script type="module" src="/src/index.ts"></script> -->
+    <script type="module">
+      import seijaCaptcha from '/src/index';
+      document.getElementById('btn')?.addEventListener('click', () => {
+        seijaCaptcha(b => {
+          if (b) {
+            alert('successful');
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
