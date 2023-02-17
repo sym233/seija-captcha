@@ -6,14 +6,18 @@ import seijaSrc from '../static/seija.png';
 
 const supportedLanguages = ['en', 'zh'] as const;
 type Language = typeof supportedLanguages[number];
-type Text = Record<Language, {
-  [key in 'title' | 'description' | 'succ' | 'close']: string;
-}>;
+type Text = Record<
+  Language,
+  {
+    [key in 'title' | 'description' | 'succ' | 'close']: string;
+  }
+>;
 
 const text: Text = {
   en: {
     title: 'Kijin Seija Captcha',
-    description: 'Please move the following slider to rotate Kijin Seija in proper angle',
+    description:
+      'Please move the following slider to rotate Kijin Seija in proper angle',
     succ: 'Validated',
     close: 'Close',
   },
@@ -25,7 +29,6 @@ const text: Text = {
   },
 };
 
-
 interface Option {
   language: Language;
   /** number in degree to allow Seija different from the vertical */
@@ -36,7 +39,10 @@ interface Option {
   allowDown: boolean;
 }
 const defaultOption: Option = {
-  language: supportedLanguages.find(v => v === window.navigator.language.split('-')[0]) ?? 'en',
+  language:
+    supportedLanguages.find(
+      v => v === window.navigator.language.split('-')[0]
+    ) ?? 'en',
   diff: 20,
   allowUp: true,
   allowDown: true,
@@ -44,12 +50,21 @@ const defaultOption: Option = {
 
 /**
  * @param result validation is passed
- * @param degs slider continuous movements 
+ * @param degs slider continuous movements
  */
 type SeijaCallback = (result: boolean, degs: number[][]) => void;
 
+/**
+ *
+ * @param afterRotateCb
+ * @param option
+ * @returns closeWindow
+ */
 function seijaCaptcha(afterRotateCb?: SeijaCallback, option?: Partial<Option>) {
-  const { language, diff, allowUp, allowDown } = Object.assign({}, defaultOption, option);
+  const { language, diff, allowUp, allowDown } = {
+    ...defaultOption,
+    ...option,
+  };
   const initDegInput = 270;
   const initDeg = Math.floor(Math.random() * 360);
 
@@ -65,25 +80,32 @@ function seijaCaptcha(afterRotateCb?: SeijaCallback, option?: Partial<Option>) {
   seijaImg.style.transform = `rotate(${initDeg + initDegInput}deg)`;
 
   function degChange(ev: InputEvent) {
-    const deg = Number.parseInt((ev.target as HTMLInputElement).value) + initDeg;
+    const deg =
+      Number.parseInt((ev.target as HTMLInputElement).value) + initDeg;
     currentDeg.push(deg);
     seijaImg.style.transform = `rotate(${deg}deg)`;
   }
   function afterRotate(ev: InputEvent) {
     degs.push(currentDeg);
     currentDeg = [];
-    const deg = (Number.parseInt((ev.target as HTMLInputElement).value) + initDeg) % 360;
+    const deg =
+      (Number.parseInt((ev.target as HTMLInputElement).value) + initDeg) % 360;
     const up = allowUp && (deg <= diff || 360 - diff <= deg);
-    const down = allowDown && (180 - diff <= deg && deg <= 180 + diff);
+    const down = allowDown && 180 - diff <= deg && deg <= 180 + diff;
     const succ = up || down;
     afterRotateCb?.(succ, degs);
   }
-  
+
+  const containerRef = { current: null as Node | null };
+
   function closeWindow() {
-    remove(document.getElementById('seija-captcha-root-container')!);
+    if (containerRef.current) {
+      remove(containerRef.current as HTMLLIElement);
+    }
   }
 
-  const container = h('div',
+  containerRef.current = h(
+    'div',
     {
       id: 'seija-captcha-root-container',
       onClick: ev => {
@@ -92,36 +114,40 @@ function seijaCaptcha(afterRotateCb?: SeijaCallback, option?: Partial<Option>) {
         }
       },
     },
-    h('div',
+    h(
+      'div',
       {
         className: 'container',
       },
-      h('h3',
-        {},
-        text[language].title
-      ),
-      h('div',
+      h('h3', {}, text[language].title),
+      h(
+        'div',
         {
-          className: 'image-container'
+          className: 'image-container',
         },
-        seijaImg,
+        seijaImg
       ),
       h('p', {}, text[language].description),
-      h('input',
-        {
-          className: 'deg-input',
-          type: 'range',
-          min: '0',
-          max: `${initDegInput * 2}`,
-          defaultValue: `${initDegInput}`,
-          onInput: degChange,
-          onChange: afterRotate,
-        }),
-      h('button', { type: 'button', onClick: closeWindow }, text[language].close)
-    ),
+      h('input', {
+        className: 'deg-input',
+        type: 'range',
+        min: '0',
+        max: `${initDegInput * 2}`,
+        defaultValue: `${initDegInput}`,
+        onInput: degChange,
+        onChange: afterRotate,
+      }),
+      h(
+        'button',
+        { type: 'button', onClick: closeWindow },
+        text[language].close
+      )
+    )
   );
 
-  append(document.body, container);
+  append(document.body, containerRef.current);
+
+  return closeWindow;
 }
 
 export default seijaCaptcha;

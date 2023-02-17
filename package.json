@@ -1,16 +1,38 @@
 {
   "name": "seija-captcha",
   "version": "1.0.0",
-  "description": "",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "description": "A toy captcha rotating Kijin Seija image for validation. Do NOT use for security or production.",
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "./dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.umd.cjs"
+    },
+    "./dist/style.css": {
+      "import": "./dist/style.css",
+      "require": "./dist/style.css"
+    }
+  },
   "scripts": {
     "dev": "vite",
-    "build": "tsc",
+    "build:lib": "vite build -c lib.vite.config.js && tsc",
+    "build:app": "vite build -c app.vite.config.js",
+    "build:gh": "vite build -c gh.vite.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "captcha",
+    "Kijin Seija"
+  ],
+  "author": {
+    "name": "sym233",
+    "email": "yimiao233@outlook.com"
+  },
   "license": "ISC",
   "devDependencies": {
     "less": "^4.1.3",
