@@ -5,6 +5,7 @@
   "main": "./dist/index.umd.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "homepage": "https://github.com/sym233/seija-captcha",
   "files": [
     "./dist"
   ],
