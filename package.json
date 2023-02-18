@@ -1,10 +1,11 @@
 {
   "name": "seija-captcha",
-  "version": "1.0.0",
+  "version": "1.0.0.1",
   "description": "A toy captcha rotating Kijin Seija image for validation. Do NOT use for security or production.",
   "main": "./dist/index.umd.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "homepage": "https://github.com/sym233/seija-captcha",
   "files": [
     "./dist"
   ],
